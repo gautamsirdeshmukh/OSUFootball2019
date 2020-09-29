@@ -1,0 +1,81 @@
+---
+title: "Wide Receivers"
+output: pdf_document
+---
+
+```{r setup, include=FALSE, echo = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r packages and data, include = FALSE, echo = FALSE}
+library(tidyverse, quietly = TRUE)
+library(broom, quietly = TRUE)
+library(ggplot2, quietly = TRUE)
+library(readxl, quietly = TRUE)
+library(cowplot, quietly = TRUE)
+library(knitr, quietly = TRUE)
+library(scales, quietly = TRUE)
+osufootball2019_off <- read_excel("data/osufootball2019_off.xlsx")
+```
+
+It is hard to know who was the "best" wide receiver on the 2019-2020 Ohio State Buckeyes football team. Some may point to the sure-handed KJ Hill, the program's all-time receptions leaders. Others may turn to the smooth, reliable Chris Olave, Ohio State's leader in receiving yards and touchdowns last season. Some may even mention Garrett Wilson, the ultra-talented stud out of Texas. 
+
+In reality, it is more fitting to acknowledge that Ohio State had a diverse set of receivers who each had their own signature trait. Let's start by looking at the best deep threats on the team.
+
+```{r yards per reception and tds, echo = FALSE}
+yards_pr <- ggplot(data = filter(osufootball2019_off, rec_yd > 0, pos == "wide receiver", games >= 4), mapping = aes(x = reorder(lastname, rec_avg), y = rec_avg, fill = lastname)) +
+  geom_col() +
+  coord_flip() +
+  ylab("Yards per Reception") +
+  xlab("Receiver") +
+  ggtitle("Yards per Reception", "games played >= 4") +
+  guides(fill = FALSE) + 
+  theme_minimal() +
+  scale_fill_brewer(palette = "Reds")
+
+tds <- ggplot(data = filter(osufootball2019_off, rec_yd > 0, pos == "wide receiver", games >= 4), mapping = aes(x = reorder(lastname, rec_td), y = rec_td, fill = lastname)) +
+  geom_col() +
+  coord_flip() +
+  ylab("Touchdowns") +
+  xlab("Receiver") +
+  ggtitle("Touchdowns", "games played >= 4") +
+  guides(fill = FALSE) + 
+  theme_minimal() +
+  scale_fill_brewer(palette = "Reds")
+
+plot_grid(yards_pr, tds, labels = "")
+```
+As we can see, it was actually the electric (yet raw) Jameson Williams who led the team with nearly 20 yards per reception. Though Williams did not see the field as much as his peers, he will surely be an important member of the Buckeyes' offensive core in 2020. Chris Olave falls just behind at around 17.5 yards per reception, while KJ Hill is far down the line at around 11 yd/rec.
+
+However, Olave led the team in touchdowns, a fact that cannot be overlooked in the slightest. Though Williams may turn out to be the more valuable deep threat, Olave's consistent production has him as OSU's WR1 heading into next season. 
+
+Why might this be? Do taller receivers amass more yards a game? Do stronger (therein heavier) wideouts perform better in game? Let's check it out.
+
+```{r height and weight, echo = FALSE}
+height <- ggplot(data = filter(osufootball2019_off, rec_yd > 0, pos == "wide receiver"), mapping = aes(x = reorder(lastname, height), y = height, fill = lastname)) +
+  geom_col() +
+  coord_flip() +
+  ylab("Height (inches)") +
+  xlab("Receiver") +
+  ggtitle("Height (inches)") +
+  guides(fill = FALSE) + 
+  theme_minimal() +
+  scale_fill_brewer(palette = "Reds")
+
+weight <- ggplot(data = filter(osufootball2019_off, rec_yd > 0, pos == "wide receiver"), mapping = aes(x = reorder(lastname, weight), y = weight, fill = lastname)) +
+  geom_col() +
+  coord_flip() +
+  ylab("Weight (pounds)") +
+  xlab("Receiver") +
+  ggtitle("Weight (pounds)") +
+  guides(fill = FALSE) + 
+  theme_minimal() +
+  scale_fill_brewer(palette = "Reds")
+
+plot_grid(height, weight, labels = "")
+```
+Several of the tallest receivers on the team, like Jaylen Harris and Binjimen Victor, didn't produce on the field nearly as much as their peers when the time came to play ball. Heavier receivers like Austin Mack, Harris, Victor and Jaelen Gill did not either. However, looking at these plots, we notice an interesting pattern.
+
+The talented trio of Olave, Wilson and Hill are clustered right around 72 inches; aka 6 feet tall. Additionally, the three receivers all weight between the high 180s and low 190s , in pounds.
+
+Perhaps Ohio State figured out that this is what the protoype deep threat should look like. At least, it seems like their model has been working. Legendary Buckeye wideout Ted Ginn Jr., known for his long catch and runs, comes in at 5'11", 180 lbs -- just a bit below the golden measurables. One of the heroes of Ohio State's 2014 championship run, Devin Smith, comes in at 6'1", 205 lbs. Parris Campbell, a speedster from the 2018 team, has measurements of 6'0" and 205 lbs. Even the next man up, Jameson Williams, is right there with them at 6'1", 193 lbs. It'll be up to him to make sure the line of success continues as well.
